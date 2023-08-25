@@ -1,0 +1,50 @@
+  # Step #1: Disable SELinux
+  - name: Disable SELinux on RedHat
+    selinux:
+      state: disabled
+
+  # Step #2: Install Apache
+  - name: install the latest version of Apache on RedHat
+    yum:
+      name: httpd
+      state: latest
+
+  # Step #3: Start/Enable Apache 
+  - name: Start and Enable apache on RedHat
+    systemd:
+      state: started
+      enabled: yes
+      name: httpd
+
+  # Step #4: Download Template
+  - name: Download template on RedHat
+    get_url:
+      url: https://www.free-css.com/assets/files/free-css-templates/download/page294/woody.zip
+      dest: /tmp/
+
+  - name: install unzip
+    yum:
+      name: unzip
+      state: latest
+
+  # Step #5: Extract Template to var/www/html
+  - name: Unarchive a file that is already on the remote machine
+    unarchive:
+      src: /tmp/woody.zip
+      dest: /var/www/html
+      remote_src: yes
+ 
+  - name: Move Template Files
+    shell: mv /var/www/html/carpenter-website-template/* /var/www/html/
+    args:
+      creates: /var/www/html/index.html
+
+  - name: Recursively change ownership of a directory
+    file:
+      path: /var/www/html
+      state: directory
+      recurse: yes
+      owner: apache   
+      group: apache
+
+  # Step#6: Check and make sure websites are running

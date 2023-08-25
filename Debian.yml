@@ -1,0 +1,33 @@
+# Step #2: Install Apache
+- name: Install Apache on Debian
+  apt:
+    name: apache2
+    update_cache: yes
+    state: present
+
+# Step #3: Start/Enable Apache 
+- name: Start and Enable Apache on Debian
+  systemd:
+    state: started
+    enabled: yes
+    name: apache2
+
+# Step #4: Download Template
+- name: Download foo.conf
+  get_url:
+    url: https://www.free-css.com/assets/files/free-css-templates/download/page294/woody.zip
+    dest: /tmp/
+
+# Step #5: Extract Template to var/www/html
+- name: Unarchive Template on Debian
+  unarchive:
+    src: /tmp/woody.zip
+    dest: /var/www/html
+    remote_src: yes
+
+- name: Move Template Files
+  shell: mv /var/www/html/carpenter-website-template/* /var/www/html/
+  args: 
+    creates: /var/www/html/index.html
+ 
+# Step #6: Check and make sure website is running
